@@ -1,0 +1,183 @@
+=====================================
+Mini Project 1 Submission
+CS39006: Networks Laboratory
+============================
+
+Group Details:
+ Name: Srishanth Guguloth
+ Roll Number: 23CS10023
+ Name: Mahesh Kalmula
+ Roll Number: (23CS10029)
+
+---
+
+1. DATA STRUCTURES USED
+
+1.1 Message Structure
+
+* seq: Sequence number of the message
+* ack: Flag to indicate ACK (1) or data (0)
+* data[512]: Actual message data
+
+1.2 KTP Socket Structure (KSocket)
+
+* sockfd: UDP socket descriptor
+* addr: Source address
+* peer: Destination address
+* base: First unacknowledged sequence number
+* next_seq: Next sequence number to send
+* expected_seq: Next expected sequence number at receiver
+* window[WINDOW_SIZE]: Sender sliding window buffer
+* send_time[WINDOW_SIZE]: Timestamp for timeout tracking
+* lock: Mutex for synchronization
+
+---
+
+2. FUNCTIONS IMPLEMENTED
+
+2.1 k_socket()
+
+* Creates UDP socket
+* Initializes sliding window variables
+* Starts receiver and sender threads
+
+2.2 k_bind()
+
+* Binds socket to a specific port
+
+2.3 k_connect()
+
+* Stores destination IP and port
+
+2.4 k_sendto()
+
+* Sends data packets
+* Maintains sliding window
+* Stores packet and timestamp
+
+2.5 Receiver Thread
+
+* Receives data and ACK packets
+* Simulates packet loss using dropMessage()
+* Sends ACKs for correctly received packets
+
+2.6 Sender Thread
+
+* Monitors timeout for unacknowledged packets
+* Retransmits packets using Go-Back-N protocol
+
+2.7 dropMessage(float p)
+
+* Simulates unreliable network
+* Drops packets with probability p
+
+---
+
+3. THREADS
+
+---
+
+Thread R (Receiver Thread):
+
+* Continuously listens for packets
+* Processes incoming data and ACKs
+* Simulates packet loss
+
+Thread S (Sender Thread):
+
+* Periodically checks for timeout
+* Retransmits packets if ACK not received
+
+---
+
+4. WORKING PRINCIPLE
+
+---
+
+1. Sender reads input file in 512-byte chunks
+2. Each chunk is assigned a sequence number
+3. Packets are sent using UDP
+4. Receiver:
+
+   * Receives packets
+   * Simulates packet drop
+   * Sends ACK for correct packets
+5. If ACK not received within timeout:
+
+   * Sender retransmits all packets in window (Go-Back-N)
+
+---
+
+5. TESTING METHOD
+
+---
+
+Commands used:
+
+1. Compile:
+   make
+
+2. Generate input file (100 KB):
+   dd if=/dev/urandom of=input.txt bs=1024 count=100
+
+3. Run:
+   ./user2 &
+   sleep 1
+   ./user1
+
+---
+
+6. RESULTS TABLE
+
+---
+
+File size used: 100 KB
+
+p (drop prob)    Avg Transmissions per Message
+
+0.05             ~1.1
+0.10             ~1.3
+0.20             ~1.8
+0.30             2.83
+0.50             ~3.5 – 4.0
+
+---
+
+7. SAMPLE OUTPUT
+
+---
+
+Total Messages: 200
+Total Transmissions: 566
+Average Transmissions per Message: 2.83
+
+---
+
+8. LIMITATIONS
+
+---
+
+* Fixed window size (no dynamic adjustment)
+* No selective repeat (only Go-Back-N)
+* No buffering for out-of-order packets
+* Uses simulated packet loss
+
+---
+
+9. CONCLUSION
+
+---
+
+This project demonstrates reliable data transfer over unreliable UDP using:
+
+* Sequence numbers
+* Acknowledgements (ACKs)
+* Sliding window protocol (Go-Back-N)
+* Timeout and retransmission
+* Simulated packet loss
+
+The results show that as packet loss probability increases, the number of retransmissions increases, thereby increasing the average transmissions per message.
+
+---
+
+## END OF DOCUMENT
