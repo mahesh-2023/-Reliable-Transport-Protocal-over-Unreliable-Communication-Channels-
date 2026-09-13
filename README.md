@@ -1,0 +1,2 @@
+# -Reliable-Transport-Protocal-over-Unreliable-Communication-Channels-
+Implemented KGP Transport Protocol (KTP) over UDP for reliable, in-order transfer over unreliable channels. Developed 512-byte packets, sequence numbering, ACKs, sliding-window flow control, timeout-based retransmission, Go-Back-N recovery, packet-loss simulation, and sender/receiver threads in C. Evaluated overhead under varying packet loss rates.
